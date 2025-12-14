@@ -1,0 +1,47 @@
+{
+    "name": "cdoebler/php-generic-user-switcher",
+    "description": "A framework-agnostic PHP package for user switching with a frontend component.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christian Doebler",
+            "email": "mail@christian-doebler.net"
+        }
+    ],
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "mockery/mockery": "^1.6",
+        "rector/rector": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cdoebler\\GenericUserSwitcher\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "pest": "vendor/bin/pest",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=256M",
+        "rector": "php -d memory_limit=-1 vendor/bin/rector process",
+        "rector-dry": "php -d memory_limit=-1 vendor/bin/rector process --dry-run",
+        "test": [
+            "@rector-dry",
+            "@phpstan",
+            "@pest"
+        ]
+    }
+}
