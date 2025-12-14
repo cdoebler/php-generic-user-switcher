@@ -8,7 +8,7 @@ A framework-agnostic PHP package for user switching with an integrated frontend 
 - **Clean Interface-Based Design**: Easy to extend and customize
 - **Session-Based Impersonation**: Non-destructive user switching with preserved original user identity
 - **Visual UI Component**: Beautiful, searchable dropdown widget for quick user switching
-- **Type-Safe**: Built with PHP 8.2+ strict types and PHPStan level 9 validation
+- **Type-Safe**: Built with PHP 8.2+ strict types and PHPStan level 10 validation
 - **Zero Dependencies**: No external production dependencies
 - **Fully Tested**: Comprehensive test coverage with Pest
 
@@ -450,7 +450,7 @@ composer rector
 
 This package maintains high code quality standards:
 
-- **PHPStan Level 9**: Maximum static analysis strictness
+- **PHPStan Level 10**: Maximum static analysis strictness
 - **Pest Testing**: Modern PHP testing with comprehensive coverage
 - **Rector**: Automated code modernization and consistency
 - **Architecture Tests**: Enforces coding standards and best practices
@@ -492,7 +492,7 @@ Contributions are welcome! Please ensure:
 
 1. All tests pass (`composer test`)
 2. Code follows PSR-12 standards
-3. PHPStan level 9 passes
+3. PHPStan level 10 passes
 4. New features include tests
 
 ## License
