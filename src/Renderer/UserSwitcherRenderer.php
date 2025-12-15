@@ -190,12 +190,13 @@ HTML;
         $id = $user->getIdentifier();
         $name = htmlspecialchars($user->getDisplayName(), ENT_QUOTES | ENT_HTML5);
         $idStr = htmlspecialchars((string)$id, ENT_QUOTES | ENT_HTML5);
+        $paramNameEscaped = htmlspecialchars($paramName, ENT_QUOTES | ENT_HTML5);
 
         $activeUserClass = (string)$currentUserId === (string)$id ? 'cdoebler-gus-item-active' : '';
 
         return <<<HTML
         <li class="cdoebler-gus-item {$activeUserClass}">
-            <a href="javascript:void(0)" onclick="gusSwitchUser('{$paramName}', '{$idStr}')" class="cdoebler-gus-link">
+            <a href="javascript:void(0)" data-param-name="{$paramNameEscaped}" data-user-id="{$idStr}" onclick="gusSwitchUser(this.dataset.paramName, this.dataset.userId)" class="cdoebler-gus-link">
                 {$name} <span class="cdoebler-gus-id">#{$idStr}</span>
             </a>
         </li>
@@ -204,9 +205,11 @@ HTML;
 
     private function renderStopItem(string $paramName): string
     {
-         return <<<HTML
+        $paramNameEscaped = htmlspecialchars($paramName, ENT_QUOTES | ENT_HTML5);
+
+        return <<<HTML
         <li class="cdoebler-gus-item" style="background: #fff0f0;">
-            <a href="javascript:void(0)" onclick="gusStopImpersonating('{$paramName}')" class="cdoebler-gus-link" style="color: #d32f2f;">
+            <a href="javascript:void(0)" data-param-name="{$paramNameEscaped}" onclick="gusStopImpersonating(this.dataset.paramName)" class="cdoebler-gus-link" style="color: #d32f2f;">
                 <strong>Stop Impersonating</strong>
             </a>
         </li>
