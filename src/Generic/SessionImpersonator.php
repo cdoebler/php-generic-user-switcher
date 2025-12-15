@@ -33,11 +33,19 @@ final readonly class SessionImpersonator implements ImpersonatorInterface
         }
 
         $_SESSION[$this->sessionKey] = $identifier;
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
     }
 
     public function stopImpersonating(): void
     {
         unset($_SESSION[$this->sessionKey]);
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
     }
 
     public function isImpersonating(): bool
