@@ -44,3 +44,25 @@ test('it uses configured session key', function (): void {
     expect($_SESSION['custom_key'])->toBe(789)
         ->and(isset($_SESSION['generic_user_switcher_impersonator']))->toBeFalse();
 });
+
+test('it throws exception for empty string identifier', function (): void {
+    $impersonator = new SessionImpersonator();
+    $impersonator->impersonate('');
+})->throws(InvalidArgumentException::class, 'User identifier cannot be empty.');
+
+test('it throws exception for whitespace-only identifier', function (): void {
+    $impersonator = new SessionImpersonator();
+    $impersonator->impersonate('   ');
+})->throws(InvalidArgumentException::class, 'User identifier cannot be empty.');
+
+test('it throws exception for identifier exceeding maximum length', function (): void {
+    $impersonator = new SessionImpersonator();
+    $impersonator->impersonate(str_repeat('a', 256));
+})->throws(InvalidArgumentException::class, 'User identifier cannot exceed 255 characters.');
+
+test('it trims whitespace from string identifiers', function (): void {
+    $impersonator = new SessionImpersonator();
+    $impersonator->impersonate('  user123  ');
+
+    expect($impersonator->getOriginalUserId())->toBe('user123');
+});

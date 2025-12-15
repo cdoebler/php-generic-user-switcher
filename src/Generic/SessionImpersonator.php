@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cdoebler\GenericUserSwitcher\Generic;
 
 use Cdoebler\GenericUserSwitcher\Interfaces\ImpersonatorInterface;
+use InvalidArgumentException;
 use RuntimeException;
 
 final readonly class SessionImpersonator implements ImpersonatorInterface
@@ -19,6 +20,18 @@ final readonly class SessionImpersonator implements ImpersonatorInterface
 
     public function impersonate(string|int $identifier): void
     {
+        if (is_string($identifier)) {
+            $identifier = trim($identifier);
+
+            if ($identifier === '') {
+                throw new InvalidArgumentException('User identifier cannot be empty.');
+            }
+
+            if (strlen($identifier) > 255) {
+                throw new InvalidArgumentException('User identifier cannot exceed 255 characters.');
+            }
+        }
+
         $_SESSION[$this->sessionKey] = $identifier;
     }
 
