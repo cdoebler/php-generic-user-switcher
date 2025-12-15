@@ -425,6 +425,46 @@ if (getenv('APP_ENV') === 'development') {
 
 4. **Audit logging** - Consider logging all impersonation events for security auditing
 
+### Example: Implementing Audit Logging
+
+The package supports optional audit logging to track all impersonation events:
+
+```php
+<?php
+
+use Cdoebler\GenericUserSwitcher\Interfaces\AuditLoggerInterface;
+
+class DatabaseAuditLogger implements AuditLoggerInterface
+{
+    public function __construct(
+        private \PDO $pdo,
+        private int $currentUserId
+    ) {}
+
+    public function logImpersonationStarted(string|int $targetUserId): void
+    {
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO audit_log (user_id, action, target_user_id, created_at)
+             VALUES (?, ?, ?, NOW())'
+        );
+        $stmt->execute([$this->currentUserId, 'impersonation_started', $targetUserId]);
+    }
+
+    public function logImpersonationStopped(): void
+    {
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO audit_log (user_id, action, created_at)
+             VALUES (?, ?, NOW())'
+        );
+        $stmt->execute([$this->currentUserId, 'impersonation_stopped']);
+    }
+}
+
+// Usage
+$auditLogger = new DatabaseAuditLogger($pdo, $currentUser->getId());
+$impersonator = new SessionImpersonator('generic_user_switcher_impersonator', $auditLogger);
+```
+
 ## Development
 
 ### Running Tests

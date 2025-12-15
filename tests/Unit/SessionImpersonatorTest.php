@@ -1,6 +1,7 @@
 <?php
 
 use Cdoebler\GenericUserSwitcher\Generic\SessionImpersonator;
+use Cdoebler\GenericUserSwitcher\Interfaces\AuditLoggerInterface;
 
 beforeEach(function (): void {
     if (session_status() === PHP_SESSION_ACTIVE) {
@@ -65,4 +66,35 @@ test('it trims whitespace from string identifiers', function (): void {
     $impersonator->impersonate('  user123  ');
 
     expect($impersonator->getOriginalUserId())->toBe('user123');
+});
+
+test('it calls audit logger when impersonation starts', function (): void {
+    $logger = Mockery::mock(AuditLoggerInterface::class);
+    $logger->shouldReceive('logImpersonationStarted')
+        ->once()
+        ->with(123);
+
+    $impersonator = new SessionImpersonator('generic_user_switcher_impersonator', $logger);
+    $impersonator->impersonate(123);
+});
+
+test('it calls audit logger when impersonation stops', function (): void {
+    $logger = Mockery::mock(AuditLoggerInterface::class);
+    $logger->shouldReceive('logImpersonationStarted')->once();
+    $logger->shouldReceive('logImpersonationStopped')->once();
+
+    $impersonator = new SessionImpersonator('generic_user_switcher_impersonator', $logger);
+    $impersonator->impersonate(456);
+    $impersonator->stopImpersonating();
+});
+
+test('it works without audit logger', function (): void {
+    $impersonator = new SessionImpersonator();
+    $impersonator->impersonate(789);
+
+    expect($impersonator->isImpersonating())->toBeTrue();
+
+    $impersonator->stopImpersonating();
+
+    expect($impersonator->isImpersonating())->toBeFalse();
 });
