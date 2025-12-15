@@ -32,7 +32,7 @@ readonly class UserSwitcherRenderer implements RendererInterface
         }
 
         $position = $config['position'] ?? 'bottom-right';
-        $zIndex = $config['z_index'] ?? 9999;
+        $zIndex = is_int($config['z_index'] ?? null) ? $config['z_index'] : 9999;
         $paramName = $config['param_name'] ?? '_switch_user';
 
         $positionCss = match ($position) {
@@ -41,6 +41,8 @@ readonly class UserSwitcherRenderer implements RendererInterface
             'top-left' => 'top: 20px; left: 20px;',
             default => 'bottom: 20px; right: 20px;',
         };
+
+        $positionEscaped = htmlspecialchars($position, ENT_QUOTES | ENT_HTML5);
 
         $currentUserId = $config['current_user_id'] ?? $this->impersonator->getOriginalUserId();
         $isImpersonating = $this->impersonator->isImpersonating();
@@ -150,7 +152,7 @@ readonly class UserSwitcherRenderer implements RendererInterface
     }
 </style>
 
-<div class="cdoebler-gus-container" data-pos="{$position}">
+<div class="cdoebler-gus-container" data-pos="{$positionEscaped}">
     <ul class="cdoebler-gus-list" id="cdoebler-gus-list">
         <li class="cdoebler-gus-search">
             <input type="text" placeholder="Search users..." onkeyup="gusFilterUsers(this)">
