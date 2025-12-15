@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cdoebler\GenericUserSwitcher\Generic;
 
+use Cdoebler\GenericUserSwitcher\Interfaces\AuditLoggerInterface;
 use Cdoebler\GenericUserSwitcher\Interfaces\ImpersonatorInterface;
 use InvalidArgumentException;
 use RuntimeException;
@@ -12,6 +13,7 @@ final readonly class SessionImpersonator implements ImpersonatorInterface
 {
     public function __construct(
         private string $sessionKey = 'generic_user_switcher_impersonator',
+        private ?AuditLoggerInterface $auditLogger = null,
     ) {
         if (session_status() === PHP_SESSION_NONE && ! headers_sent()) {
             session_start();
@@ -37,10 +39,14 @@ final readonly class SessionImpersonator implements ImpersonatorInterface
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_regenerate_id(true);
         }
+
+        $this->auditLogger?->logImpersonationStarted($identifier);
     }
 
     public function stopImpersonating(): void
     {
+        $this->auditLogger?->logImpersonationStopped();
+
         unset($_SESSION[$this->sessionKey]);
 
         if (session_status() === PHP_SESSION_ACTIVE) {
